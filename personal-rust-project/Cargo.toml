@@ -1,0 +1,24 @@
+[package]
+name = "personal-rust-project"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+borsh = "0.9.3"
+borsh-derive = "0.9.1"
+solana-program="~1.14.9"
+solana-client="1.14.9"
+solana-sdk = "~1.14.9"
+spl-token = "3.5.0"
+solana-account-decoder = "1.14.9"
+solscan-api = "0.1.2"
+httpmock = "0.6.1"
+# tokio = { version = "1.22.0", features = ["full"] }
+tokio = "~1.14.1"
+# needed to downgrade httpmock for tokio compatability
+serde_json = "1.0.89"
+
+[dev-dependencies]
+solana-program-test = "~1.14.9"
