@@ -1,68 +1,74 @@
-const assert = require("assert");
+// ===== TEST WIP FOR COUNTER FNs ATM - MOVING TO NFT ANCHOR STUFF ====//
+
+// const assert = require("assert");
+// // const deploy = require("../migrations/deploy");
+
 // const anchor = require("@coral-xyz/anchor");
-const { SystemProgram } = anchor.web3;
-let _myAccount;
-describe("basic-1", () => {
-  // Use a local provider.
-  const provider = anchor.AnchorProvider.local();
 
-  // Configure the client to use the local cluster.
-  anchor.setProvider(provider);
+// console.log(anchor);
+// const { SystemProgram } = anchor.web3;
+// let _myAccount;
+// describe("example_anchor_program", () => {
+//   // Use a local provider.
+//   const provider = anchor.AnchorProvider.local();
 
-  it("Creates and initializes an account in a single atomic transaction (simplified)", async () => {
-    // #region code-simplified
-    // The program to execute.
-    const program = anchor.workspace.Basic1;
+//   // Configure the client to use the local cluster.
+//   anchor.setProvider(provider);
 
-    // The Account to create.
-    const myAccount = anchor.web3.Keypair.generate();
+//   it("Creates and initializes an account in a single atomic transaction (simplified)", async () => {
+//     // #region code-simplified
+//     // The program to execute.
+//     const program = anchor.workspace.Basic1;
 
-    // Create the new account and initialize it with the program.
-    // #region code-simplified
-    await program.methods
-      .initialize(new anchor.BN(1234))
-      .accounts({
-        myAccount: myAccount.publicKey,
-        user: provider.wallet.publicKey,
-        systemProgram: SystemProgram.programId,
-      })
-      .signers([myAccount])
-      .rpc();
-    // #endregion code-simplified
+//     // The Account to create.
+//     const myAccount = anchor.web3.Keypair.generate();
 
-    // Fetch the newly created account from the cluster.
-    const account = await program.account.myAccount.fetch(myAccount.publicKey);
+//     // Create the new account and initialize it with the program.
+//     // #region code-simplified
+//     await program.methods
+//       .initialize(new anchor.BN(1234))
+//       .accounts({
+//         myAccount: myAccount.publicKey,
+//         user: provider.wallet.publicKey,
+//         systemProgram: SystemProgram.programId,
+//       })
+//       .signers([myAccount])
+//       .rpc();
+//     // #endregion code-simplified
 
-    // Check it's state was initialized.
-    assert.ok(account.data.eq(new anchor.BN(1234)));
+//     // Fetch the newly created account from the cluster.
+//     const account = await program.account.myAccount.fetch(myAccount.publicKey);
 
-    // Store the account for the next test.
-    _myAccount = myAccount;
-  });
+//     // Check it's state was initialized.
+//     assert.ok(account.data.eq(new anchor.BN(1234)));
 
-  it("Updates a previously created account", async () => {
-    //const myAccount = _myAccount;
-    const myAccount = _myAccount;
+//     // Store the account for the next test.
+//     _myAccount = myAccount;
+//   });
 
-    // #region update-test
+//   it("Updates a previously created account", async () => {
+//     //const myAccount = _myAccount;
+//     const myAccount = _myAccount;
 
-    // The program to execute.
-    const program = anchor.workspace.Basic1;
+//     // #region update-test
 
-    // Invoke the update rpc.
-    await program.methods
-      .update(new anchor.BN(4321))
-      .accounts({
-        myAccount: myAccount.publicKey,
-      })
-      .rpc();
+//     // The program to execute.
+//     const program = anchor.workspace.Basic1;
 
-    // Fetch the newly updated account.
-    const account = await program.account.myAccount.fetch(myAccount.publicKey);
+//     // Invoke the update rpc.
+//     await program.methods
+//       .update(new anchor.BN(4321))
+//       .accounts({
+//         myAccount: myAccount.publicKey,
+//       })
+//       .rpc();
 
-    // Check it's state was mutated.
-    assert.ok(account.data.eq(new anchor.BN(4321)));
+//     // Fetch the newly updated account.
+//     const account = await program.account.myAccount.fetch(myAccount.publicKey);
 
-    // #endregion update-test
-  });
-});
+//     // Check it's state was mutated.
+//     assert.ok(account.data.eq(new anchor.BN(4321)));
+
+//     // #endregion update-test
+//   });
+// });

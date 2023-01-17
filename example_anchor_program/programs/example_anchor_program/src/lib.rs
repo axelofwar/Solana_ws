@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("A9GevgQpk6FDQ9G5YwZFrrg369BgeFAVBHG2GtwZi1tw");
 
 #[program]
 pub mod example_anchor_program {
@@ -10,13 +10,13 @@ pub mod example_anchor_program {
     // the data field of that struct is the account that we recognize as the user who called the instruction
     // this data field is what will be used to call instructions on the user account
     pub fn initialize_acc(ctx: Context<InitializeAcc>, data: u64) -> Result<()> {
-        let my_account = &mut ctx.accounts.my_account; 
+        let my_account = &mut ctx.accounts.my_account;
         my_account.data = data; // set the data from initialize struct
         Ok(())
     }
 
-    pub fn initialize_count(ctx: Context<InitializeNum>, data: u64) -> Result<()> {
-        let number = &mut ctx.accounts.number; 
+    pub fn initialize_count(ctx: Context<InitializeNum>) -> Result<()> {
+        let number = &mut ctx.accounts.number;
         number.num = 0; // set 0 for the counter
         Ok(())
     }
@@ -29,15 +29,21 @@ pub mod example_anchor_program {
 
     pub fn increment(ctx: Context<Increment>) -> Result<()> {
         let number = &mut ctx.accounts.number; // use number NOT num because that's the member of Increment struct
-        number.num +=1; // access num member of Counter type, which is the type filled from 'info in the number member of increment
+        number.num += 1; // access num member of Counter type, which is the type filled from 'info in the number member of increment
         Ok(())
     }
 
-    // pub fn decrement(ctx: Context<Decrement>, data: u64) -> Result<()> {
-    //     let my_account = &mut ctx.accounts.my_account; 
-    //     my_account.data = data; // set the data from initialize struct
-    //     Ok(())
-    // }
+    pub fn decrement(ctx: Context<Decrement>) -> Result<()> {
+        let number = &mut ctx.accounts.number;
+        number.num -= 1; // set the data from initialize struct
+        if number.num > 0 {
+            return Ok(());
+        } else {
+            number.num = 0;
+            println!("Number <=0, please increment");
+        }
+        Ok(())
+    }
 }
 
 // we need to define the account struct before utilizing it
@@ -48,7 +54,7 @@ pub mod example_anchor_program {
 
 #[derive(Accounts)]
 pub struct InitializeAcc<'info> {
-    #[account(init, payer = user, space = 8 + 8)] 
+    #[account(init, payer = user, space = 8 + 8)]
     pub my_account: Account<'info, MyAccount>,
     #[account(mut)] // define the user info as mutable because we want to set Signer
     pub user: Signer<'info>,
@@ -57,15 +63,16 @@ pub struct InitializeAcc<'info> {
 
 #[derive(Accounts)]
 pub struct Update<'info> {
-    #[account(mut)] // define my_account as mutable because we want to update it with the data passed in the fn/instruction call
+    #[account(mut)]
+    // define my_account as mutable because we want to update it with the data passed in the fn/instruction call
     pub my_account: Account<'info, MyAccount>, // the 'info of the account is updated with the data from custom type MyAccount
 }
 
 // ==== COUNTER FUNCTIONS ==== //
-// here we use the same 'info object because it allows us to access the 
+// here we use the same 'info object because it allows us to access the
 #[derive(Accounts)]
 pub struct InitializeNum<'info> {
-    #[account(init, payer = user, space = 8 + 8)] 
+    #[account(init, payer = user, space = 8 + 8)]
     pub number: Account<'info, Counter>,
     #[account(mut)] // define the user info as mutable because we want to set Signer
     pub user: Signer<'info>,
@@ -76,17 +83,24 @@ pub struct InitializeNum<'info> {
 pub struct Increment<'info> {
     #[account(mut, has_one = authority)]
     pub number: Account<'info, Counter>, // type counter has a num but still need authority member
-    pub authority: Signer <'info>
+    pub authority: Signer<'info>,
+}
 
+#[derive(Accounts)]
+pub struct Decrement<'info> {
+    #[account(mut, has_one = authority)]
+    pub number: Account<'info, Counter>, // type counter has a num but still need authority member
+    pub authority: Signer<'info>,
 }
 
 #[account]
-pub struct MyAccount { // the definition of our custom type that will hold the accuont data that we will pass to the instructions
+pub struct MyAccount {
+    // the definition of our custom type that will hold the accuont data that we will pass to the instructions
     pub data: u64,
 }
 
 #[account]
 pub struct Counter {
-    pub authority: Pubkey, 
-    pub num : u64,
+    pub authority: Pubkey,
+    pub num: u64,
 }
